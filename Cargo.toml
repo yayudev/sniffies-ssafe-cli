@@ -1,0 +1,13 @@
+[package]
+name = "sniffies-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = "4.5.36"
+convert_case = "0.8.0"
+inquire = "0.7.5"
+lazy_static = "1.5.0"
+serde = "1.0.219"
+swc = "21.0.0"
+tera = "1.20.0"
