@@ -27,24 +27,66 @@ pub enum Template {
 }
 
 impl Template {
-    pub fn get_template_filename(&self) -> &str {
+    pub fn get_content(&self) -> &str {
         match self {
-            Template::Facade => "facade.ts",
-            Template::FacadeTest => "facade.spec.ts",
-            Template::Model => "model.ts",
-            Template::Service => "service.ts",
-            Template::ServiceTest => "service.spec.ts",
-            Template::Store => "store.ts",
-            Template::StoreTest => "store.spec.ts",
-            Template::Index => "index.ts",
+            /************
+             * Features *
+             ************/
+            Template::Facade => {
+                include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/facade.ts"))
+            }
+            Template::FacadeTest => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/facade.spec.ts"
+            )),
+            Template::Model => {
+                include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/model.ts"))
+            }
+            Template::Service => {
+                include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/service.ts"))
+            }
+            Template::ServiceTest => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/service.spec.ts"
+            )),
+            Template::Store => {
+                include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/store.ts"))
+            }
+            Template::StoreTest => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/store.spec.ts"
+            )),
+            Template::Index => {
+                include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/index.ts"))
+            }
 
-            // Template::FactoryForEntity => "entity/factory.ts",
-            Template::ModelForEntity => "entity/model.ts",
-            Template::ServiceForEntity => "entity/service.ts",
-            Template::ServiceTestForEntity => "entity/service.spec.ts",
-            Template::StoreForEntity => "entity/store.ts",
-            Template::StoreTestForEntity => "entity/store.spec.ts",
-            Template::IndexForEntity => "entity/index.ts",
+            /************
+             * Entities *
+             ************/
+            Template::ModelForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/model.ts"
+            )),
+            Template::ServiceForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/service.ts"
+            )),
+            Template::ServiceTestForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/service.spec.ts"
+            )),
+            Template::StoreForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/store.ts"
+            )),
+            Template::StoreTestForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/store.spec.ts"
+            )),
+            Template::IndexForEntity => include_str!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/templates/entity/index.ts"
+            )),
         }
     }
 

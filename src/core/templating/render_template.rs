@@ -5,10 +5,10 @@ use tera::{Context, Tera};
 
 use crate::core::templating::feature::FeatureType;
 
-use super::{filters, render_config::RenderConfig, template::Template};
+use super::{filters, render_config::RenderConfig};
 
 pub fn render_template(config: &RenderConfig) -> Result<(), std::io::Error> {
-    let template_content = read_template_file(&config.template);
+    let template_content = config.template.get_content();
 
     let mut tera = Tera::default();
     tera.add_raw_templates(vec![("template", &template_content)])
@@ -39,7 +39,7 @@ fn write_to_feature_file(
     config: &RenderConfig,
 ) -> Result<(), std::io::Error> {
     let template_dest_dir = &config.feature.feature_type.get_template_dest_dir();
-    let feature_name = if config.pluralize {
+    let feature_name = if config.pluralize && !config.feature.name.ends_with('s') {
         format!("{}s", config.feature.name).to_case(Case::Kebab)
     } else {
         config.feature.name.to_case(Case::Kebab)
@@ -71,12 +71,4 @@ fn write_to_feature_file(
     );
 
     fs::write(output_path, generated_code)
-}
-
-fn read_template_file(template: &Template) -> String {
-    let facade_template = template.get_template_filename();
-    let template_path = format!("templates/{}", facade_template);
-
-    fs::read_to_string(&template_path)
-        .unwrap_or_else(|_| panic!("Error reading file: {}", template_path))
 }
