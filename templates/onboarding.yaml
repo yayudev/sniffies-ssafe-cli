@@ -1,0 +1,130 @@
+- name: Setup local env
+  hosts: localhost
+  vars:
+    node_version: 22
+
+  tasks:
+    ###############
+    # Proxy setup #
+    ###############
+
+    - name: Copy ssl configuration
+      copy:
+        src: /System/Library/OpenSSL/openssl.cnf
+        dest: openssl.cnf
+
+    - name: Add localhost dns to ssl config
+      shell: |
+        echo "subjectAltName=DNS:localhost" >> "openssl.cnf"
+
+    - name: Create private ssl dir
+      file:
+        path: /usr/local/etc/ssl/private
+        state: directory
+
+    - name: Create certs ssl dir
+      file:
+        path: /usr/local/etc/ssl/certs
+        state: directory
+
+    - name: Generate key/cert pair
+      become: true
+      command: |
+        openssl req 
+         -x509 -nodes -days 365 -newkey rsa:2048 
+         -subj "/CN=localhost" 
+         -config openssl.cnf 
+         -keyout /usr/local/etc/ssl/private/self-signed.key 
+         -out /usr/local/etc/ssl/certs/self-signed.crt
+      args:
+        creates:
+          - /usr/local/etc/ssl/private/self-signed.key
+          - /usr/local/etc/ssl/certs/self-signed.crt
+
+    - name: Generate DH key pair
+      become: true
+      command: |
+        openssl dhparam -out /usr/local/etc/ssl/certs/dhparam.pem 2048
+      args:
+        creates: /usr/local/etc/ssl/certs/dhparam.pem
+
+    - name: Install nginx
+      become: false
+      homebrew:
+        name: nginx
+        state: present
+
+    - name: Create nginx configs dir
+      file:
+        path: /opt/homebrew/etc/nginx/snippets
+        state: directory
+
+    - name: Copy SSL params config
+      become: true
+      copy:
+        src: ./bootstrap/ssl-params.conf
+        dest: /opt/homebrew/etc/nginx/snippets/ssl-params.conf
+
+    - name: Copy self-signed config
+      become: true
+      copy:
+        src: ./bootstrap/self-signed.conf
+        dest: /opt/homebrew/etc/nginx/snippets/self-signed.conf
+
+    - name: Copy nginx config
+      become: true
+      copy:
+        src: ./bootstrap/nginx.conf
+        dest: /opt/homebrew/etc/nginx/nginx.conf
+
+    - name: Update hosts file
+      become: true
+      command: |
+        echo "127.0.0.1  local.sniffies.com" >> /etc/hosts
+
+    ####################
+    # Javascript setup #
+    ####################
+
+    - name: Install fnm
+      homebrew:
+        name: fnm
+        state: present
+
+    - name: Install Node
+      shell: |
+        /bin/bash -c "fnm install {{ node_version }}"
+
+    - name: Source tools
+      shell: |
+        /bin/bash -c "source ~/.zshrc"
+
+    - name: Install pnpm
+      shell: |
+        /bin/bash -c "npm i -g pnpm@latest"
+
+    #################
+    # Angular setup #
+    #################
+
+    - name: Install Angular CLI
+      community.general.pnpm:
+        name: "@angular/cli"
+        version: latest
+        global: true
+
+    #################
+    # Tooling setup #
+    #################
+
+    - name: Install Eslint
+      community.general.pnpm:
+        name: eslint
+        version: latest
+        global: true
+
+    - name: Install Prettier
+      community.general.pnpm:
+        name: prettier
+        version: latest
+        global: true
