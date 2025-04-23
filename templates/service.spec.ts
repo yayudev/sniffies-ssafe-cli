@@ -17,7 +17,7 @@ describe("{{ feature_name | pascal | safe }}Service", () => {
   {% for property, type in properties %}
     describe('set{{ property | pascal }}', () => {
       it('should set {{ property }} when called', () => {
-        const input = INPUT_FOR_{{ property | upper }};
+        const input = INPUT_FOR_{{ property | constant }};
         service.set{{ property | pascal }}(input);
 
         expect(store.{{ property }}()).toBe(input);

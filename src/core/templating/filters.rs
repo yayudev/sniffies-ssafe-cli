@@ -21,6 +21,12 @@ pub fn constant_filter(value: &Value, _: &HashMap<String, Value>) -> Result<Valu
     Ok(to_value(value_parsed).unwrap())
 }
 
+pub fn camel_filter(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
+    let value = try_get_value!("kebab_filter", "value", String, value);
+    let value_parsed = value.to_case(Case::Camel);
+    Ok(to_value(value_parsed).unwrap())
+}
+
 #[test]
 pub fn test_pascal_filter() {
     let inputs = vec![
@@ -66,6 +72,23 @@ pub fn test_constant_filter() {
     for (input, expected) in inputs {
         let value = to_value(input).unwrap();
         let result = constant_filter(&value, &HashMap::new());
+
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+    }
+}
+
+#[test]
+pub fn test_camel_filter() {
+    let inputs = vec![
+        (r#"cruiseThisArea"#, r#"cruiseThisArea"#),
+        (r#"CruiseThisArea"#, r#"cruiseThisArea"#),
+        (r#"cruise-this-area"#, r#"cruiseThisArea"#),
+    ];
+
+    for (input, expected) in inputs {
+        let value = to_value(input).unwrap();
+        let result = camel_filter(&value, &HashMap::new());
 
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);

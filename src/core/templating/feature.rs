@@ -30,7 +30,7 @@ impl FeatureType {
         match self {
             FeatureType::ApplicationModifier => "src/app/core/application-modifiers",
             FeatureType::CoreFeature => "src/app/core/features",
-            FeatureType::Entity => "src/app/core/entity",
+            FeatureType::Entity => "src/app/core/entities",
             FeatureType::UiFeature => "src/app/features",
         }
     }

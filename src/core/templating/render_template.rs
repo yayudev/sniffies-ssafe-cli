@@ -20,6 +20,7 @@ pub fn render_template(config: &RenderConfig) -> Result<(), std::io::Error> {
 
     // Register custoom filters
     tera.register_filter("pascal", filters::pascal_filter);
+    tera.register_filter("camel", filters::camel_filter);
     tera.register_filter("kebab", filters::kebab_filter);
     tera.register_filter("constant", filters::constant_filter);
 
@@ -35,32 +36,24 @@ fn write_to_feature_file(
     generated_code: String,
     config: &RenderConfig,
 ) -> Result<(), std::io::Error> {
-    let output_dir = Path::join(
-        Path::new(&config.root_path),
-        config.feature.feature_type.clone().get_template_dest_dir(),
-    );
-    let output_dir = Path::join(
-        output_dir.as_path(),
-        config.feature.name.to_case(Case::Kebab),
-    );
+    let template_dest_dir = &config.feature.feature_type.get_template_dest_dir();
+    let feature_name = if config.pluralize {
+        format!("{}s", config.feature.name).to_case(Case::Kebab)
+    } else {
+        config.feature.name.to_case(Case::Kebab)
+    };
+
+    let output_dir = Path::new(&config.root_path)
+        .join(template_dest_dir)
+        .join(&feature_name);
 
     if !fs::exists(&output_dir).unwrap_or(false) {
         fs::create_dir_all(&output_dir).expect("Failed to create output dir");
     }
 
-    let filename = match config.template {
-        // Index doesn't need prefix
-        Template::Index => config.template.get_template_filename().to_string(),
+    let filename = config.template.get_output_filename(&feature_name);
+    let output_path = output_dir.join(&filename);
 
-        // Format to {feature_name}.{file-type.ts}
-        _ => format!(
-            "{}.{}",
-            &config.feature.name.to_case(Case::Kebab),
-            config.template.get_template_filename(),
-        ),
-    };
-
-    let output_path = Path::join(Path::new(&output_dir), Path::new(&filename));
     println!(
         "File written: {}",
         output_path
