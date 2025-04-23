@@ -12,7 +12,7 @@ pub fn create() {
         FeatureType::ApplicationModifier => create_subcommands::application_modifier(&config),
         FeatureType::CoreFeature => create_subcommands::core_feature(&config),
         FeatureType::Entity => create_subcommands::entity(&config),
-        FeatureType::UiFeature => todo!(),
+        FeatureType::UiFeature => create_subcommands::ui_feature(&config),
     }
 }
 

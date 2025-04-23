@@ -3,6 +3,8 @@ use std::{fs, path::Path};
 use convert_case::{Case, Casing};
 use tera::{Context, Tera};
 
+use crate::core::templating::feature::FeatureType;
+
 use super::{filters, render_config::RenderConfig, template::Template};
 
 pub fn render_template(config: &RenderConfig) -> Result<(), std::io::Error> {
@@ -43,9 +45,14 @@ fn write_to_feature_file(
         config.feature.name.to_case(Case::Kebab)
     };
 
-    let output_dir = Path::new(&config.root_path)
+    let mut output_dir = Path::new(&config.root_path)
         .join(template_dest_dir)
         .join(&feature_name);
+
+    // UI feature files go inside a {feature}/state dir
+    if matches!(&config.feature.feature_type, FeatureType::UiFeature) {
+        output_dir = output_dir.join("state");
+    }
 
     if !fs::exists(&output_dir).unwrap_or(false) {
         fs::create_dir_all(&output_dir).expect("Failed to create output dir");

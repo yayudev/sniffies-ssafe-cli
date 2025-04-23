@@ -17,7 +17,7 @@ pub enum Template {
     StoreTest,
     Index,
 
-    FactoryForEntity,
+    // TODO: Implement FactoryForEntity
     ModelForEntity,
     ServiceForEntity,
     ServiceTestForEntity,
@@ -38,7 +38,7 @@ impl Template {
             Template::StoreTest => "store.spec.ts",
             Template::Index => "index.ts",
 
-            Template::FactoryForEntity => "entity/factory.ts",
+            // Template::FactoryForEntity => "entity/factory.ts",
             Template::ModelForEntity => "entity/model.ts",
             Template::ServiceForEntity => "entity/service.ts",
             Template::ServiceTestForEntity => "entity/service.spec.ts",
@@ -61,7 +61,7 @@ impl Template {
             Template::StoreTest => format!("{}.store.spec.ts", feature_name),
             Template::Index => "index.ts".to_string(),
 
-            Template::FactoryForEntity => format!("{}.factory.ts", feature_name),
+            // Template::FactoryForEntity => format!("{}.factory.ts", feature_name),
             Template::ModelForEntity => format!("{}.model.ts", feature_name),
             Template::ServiceForEntity => format!("{}.service.ts", feature_name),
             Template::ServiceTestForEntity => format!("{}.service.spec.ts", feature_name),
