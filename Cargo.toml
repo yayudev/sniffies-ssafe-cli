@@ -3,6 +3,10 @@ name = "sniffies-cli"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "sniffies"
+path = "src/main.rs"
+
 [dependencies]
 clap = "4.5.36"
 convert_case = "0.8.0"
