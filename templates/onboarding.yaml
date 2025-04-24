@@ -9,6 +9,7 @@
     ###############
 
     - name: Copy ssl configuration
+      become: true
       copy:
         src: /System/Library/OpenSSL/openssl.cnf
         dest: openssl.cnf
@@ -18,11 +19,13 @@
         echo "subjectAltName=DNS:localhost" >> "openssl.cnf"
 
     - name: Create private ssl dir
+      become: true
       file:
         path: /usr/local/etc/ssl/private
         state: directory
 
     - name: Create certs ssl dir
+      become: true
       file:
         path: /usr/local/etc/ssl/certs
         state: directory
@@ -55,6 +58,7 @@
         state: present
 
     - name: Create nginx configs dir
+      become: true
       file:
         path: /opt/homebrew/etc/nginx/snippets
         state: directory
@@ -79,10 +83,10 @@
 
     - name: Update hosts file
       become: true
-      command: |
+      shell: |
         echo "127.0.0.1  local.sniffies.com" >> /etc/hosts
 
-    ####################
+      ####################
     # Javascript setup #
     ####################
 
